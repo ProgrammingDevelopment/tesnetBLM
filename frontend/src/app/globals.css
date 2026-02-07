@@ -1,0 +1,204 @@
+/* Bootstrap 5 */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css');
+
+/* PERFORMANCE MODE: Reduced animations for faster ping */
+
+/* Disable all animations globally */
+*,
+*::before,
+*::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Minimal base styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: auto;
+  text-rendering: optimizeSpeed;
+}
+
+/* Lightweight gradients - solid colors for speed */
+.gradient-bg {
+  background: #667eea !important;
+}
+
+/* Simple button states */
+.btn {
+  transition: none !important;
+  box-shadow: none !important;
+}
+
+.btn:hover {
+  filter: brightness(0.95);
+}
+
+/* Disable card shadows */
+.card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Fast form inputs */
+.form-control:focus {
+  box-shadow: none !important;
+  border-color: #667eea !important;
+}
+
+/* Preload critical assets */
+.preload {
+  opacity: 0;
+  position: absolute;
+}
+
+/* Reduce paint operations */
+.badge,
+.alert,
+.card {
+  will-change: auto !important;
+  transform: none !important;
+}
+
+/* Simplified loading spinner */
+.spinner-border {
+  animation: none !important;
+  border: 3px solid #667eea !important;
+  border-top-color: transparent !important;
+}
+
+@keyframes simple-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-fast {
+  animation: simple-spin 0.5s linear infinite;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #667eea;
+  border-top-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Remove hover effects that cause repaints */
+a:hover,
+.btn:hover {
+  text-decoration: none;
+}
+
+/* GPU acceleration for critical elements */
+.navbar,
+.card,
+.modal {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.chat-widget-root {
+  position: fixed;
+  right: 20px;
+  bottom: 90px;
+  z-index: 9998;
+  font-family: inherit;
+}
+
+.chat-widget-toggle {
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+}
+
+.chat-widget-panel {
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.chat-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.chat-widget-body {
+  height: 280px;
+  overflow-y: auto;
+  padding: 12px 14px;
+  background: #fffaf5;
+}
+
+.chat-widget-footer {
+  padding: 12px 14px;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.chat-bubble {
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.chat-user {
+  background: #e0e7ff;
+  color: #1f2937;
+  margin-left: 20px;
+}
+
+.chat-assistant {
+  background: #fef3c7;
+  color: #1f2937;
+  margin-right: 20px;
+}
+
+.captcha-card {
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.captcha-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.captcha-tile {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  transition: none;
+}
+
+.captcha-tile.active {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.captcha-icon-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.captcha-icon {
+  width: 42px;
+  height: 42px;
+}

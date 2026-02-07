@@ -1,0 +1,32 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Node / Next
+node_modules/
+.next/
+out/
+dist/
+
+# Go
+*.exe
+*.exe~
+*.out
+
+# Local data
+database.json
+
+# IDE
+.vscode/
+
+# Nested git backup
+frontend/.git.bak/
