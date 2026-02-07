@@ -3,7 +3,10 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"net/http"
+	"net/mail"
+	"regexp"
 	"strings"
 	"time"
 	"war-ticket-engine/models"
@@ -40,11 +43,82 @@ func generateID() string {
 	return hex.EncodeToString(bytes)
 }
 
+func validateRegisterInput(req RegisterRequest) error {
+	if len(req.NIK) != 16 || !isAllDigits(req.NIK) {
+		return errors.New("NIK harus 16 digit angka")
+	}
+	if !isValidPhone(req.Whatsapp) {
+		return errors.New("No. WhatsApp tidak valid (contoh: 08xxxxxxxx)")
+	}
+	if !isValidEmail(req.Email) {
+		return errors.New("Email tidak valid")
+	}
+	if !isStrongPassword(req.Password) {
+		return errors.New("Password harus min 8 karakter dan mengandung huruf besar, huruf kecil, dan angka")
+	}
+	return nil
+}
+
+func isAllDigits(s string) bool {
+	for _, r := range s {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return s != ""
+}
+
+func isValidPhone(p string) bool {
+	// Basic Indonesia mobile pattern: starts with 08 and 10-15 digits
+	if len(p) < 10 || len(p) > 15 {
+		return false
+	}
+	if !strings.HasPrefix(p, "08") {
+		return false
+	}
+	return isAllDigits(p)
+}
+
+func isValidEmail(e string) bool {
+	_, err := mail.ParseAddress(e)
+	return err == nil
+}
+
+func isStrongPassword(pw string) bool {
+	if len(pw) < 8 {
+		return false
+	}
+	var hasUpper, hasLower, hasDigit bool
+	for _, r := range pw {
+		switch {
+		case r >= 'A' && r <= 'Z':
+			hasUpper = true
+		case r >= 'a' && r <= 'z':
+			hasLower = true
+		case r >= '0' && r <= '9':
+			hasDigit = true
+		}
+	}
+	return hasUpper && hasLower && hasDigit
+}
+
+func sanitizeName(name string) string {
+	// keep letters, spaces, dots, and hyphens
+	re := regexp.MustCompile(`[^A-Za-z .-]+`)
+	clean := re.ReplaceAllString(name, "")
+	return strings.TrimSpace(clean)
+}
+
 func RegisterHandler(captcha *services.CaptchaService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req RegisterRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid request"})
+			return
+		}
+
+		if err := validateRegisterInput(req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
 			return
 		}
 
@@ -81,7 +155,7 @@ func RegisterHandler(captcha *services.CaptchaService) gin.HandlerFunc {
 		user := models.User{
 			ID:        generateID(),
 			NIK:       req.NIK,
-			Nama:      strings.ToUpper(req.Nama),
+			Nama:      strings.ToUpper(sanitizeName(req.Nama)),
 			Whatsapp:  req.Whatsapp,
 			Email:     req.Email,
 			Password:  string(hashedPassword),
@@ -109,6 +183,11 @@ func LoginHandler(captcha *services.CaptchaService) gin.HandlerFunc {
 		var req LoginRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid request"})
+			return
+		}
+
+		if req.Identifier == "" || req.Password == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Identifier dan password wajib diisi"})
 			return
 		}
 

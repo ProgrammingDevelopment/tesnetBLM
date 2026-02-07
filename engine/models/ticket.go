@@ -17,4 +17,5 @@ type Location struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Quota int64  `json:"quota"`
+	Region string `json:"region"`
 }
